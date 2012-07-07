@@ -1,0 +1,6 @@
+Django>=1.4
+PyYAML
+bbcode>=1.0.6
+django-debug-toolbar>=0.9.4
+ipdb>=0.6.1
+ipython>=0.13
