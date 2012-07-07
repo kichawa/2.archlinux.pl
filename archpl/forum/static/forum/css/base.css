@@ -1,0 +1,86 @@
+.right {
+    text-align: right;
+}
+
+.center {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.clear {
+    clear: both;
+}
+
+.separator {
+    padding: 0 10px;
+    color: #D6D6D6;
+}
+
+.top-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    background: #ffffff;
+    padding: 0 10px;
+    border-bottom: 1px solid #EBEBEB;
+    box-shadow: 1px 2px 5px #EBEBEB;
+}
+.top-menu a {
+    height: 22px;
+    padding: 10px 4px;
+    margin: 0;
+}
+.top-menu .login-menu {
+    position: relative;
+}
+.top-menu .login-menu .items {
+    display: none;
+    padding-top: 10px;
+}
+.top-menu .login-menu .items li {
+    padding: 20px 5px 10px 5px;
+}
+.top-menu .login-menu:hover ul.items {
+    top: 17px;
+    right: 0;
+    display: block;
+    list-style: none;
+    position: absolute;
+    text-align: left;
+    background: #ffffff;
+    width: 105%;
+    border: 1px solid #EBEBEB;
+    border-top: none;
+    box-shadow: 1px 2px 5px #EBEBEB;
+}
+
+
+
+.avatar {
+    background: url('http://www.gravatar.com/avatar/?d=mm&s=40') no-repeat;
+    height: 80px;
+    width: 80px;
+}
+.avatar.small {
+    background: url('http://www.gravatar.com/avatar/?d=mm&s=80') no-repeat;
+    height: 40px;
+    width: 40px;
+}
+.avatar.big {
+    background: url('http://www.gravatar.com/avatar/?d=mm&s=120') no-repeat;
+    height: 120px;
+    width: 120px;
+}
+
+.avatar.huge {
+    background: url('http://www.gravatar.com/avatar/?d=mm&s=220') no-repeat;
+    height: 220px;
+    width: 220px;
+}
+
+
+.topic .last-post-info {
+    font-size: 0.85em;
+    text-align: center;
+}

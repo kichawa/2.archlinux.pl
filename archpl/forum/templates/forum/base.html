@@ -1,0 +1,67 @@
+{% load i18n  static %}
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" type="text/css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="{% static "forum/css/base.css" %}" type="text/css" media="screen" charset="utf-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        {% block javascript %}{% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="span12">&nbsp;</div>
+            </div>
+
+            <div class="row top-menu">
+                <div class="span12 right">
+                    {% block action_buttons %}
+                    {% endblock %}
+                    {% if forum_user.is_authenticated %}
+                        <span class="login-menu">
+                            <a href="{{ forum_user.get_absolute_url }}">
+                                <i class="icon-user"></i>
+                                {% blocktrans with username=forum_user.username %}
+                                    Logged as <strong>{{ username }}</strong>
+                                {% endblocktrans %}
+                            </a>
+                            <ul class="items">
+                                <li>
+                                    <i class="icon-cog"></i>
+                                    <a href="{% url forum-user-edit forum_user.name %}">{% trans "Settings" %}</a>
+                                </li>
+                                <li>
+                                    <i class="icon-share"></i>
+                                    <a href="{% url logout %}">{% trans "Logout" %}</a>
+                                </li>
+                            </ul>
+                        </span>
+                    {% else %}
+                        <span class="login-menu">
+                            <i class="icon-user"></i>
+                            <a href="#">{% trans "Login or Register" %}</a>
+                            <ul class="items">
+                                <li>
+                                    <h5>{% trans "Authenticate using" %}</h5>
+                                </li>
+                                <li>
+                                    <i class="icon-retweet"></i>
+                                    <a href="#todo">{% trans "Register" %}</a>
+                                </li>
+                            </ul>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="span12">&nbsp;</div>
+            </div>
+
+            {% block forum_content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

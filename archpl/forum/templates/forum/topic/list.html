@@ -1,0 +1,94 @@
+{% extends "forum/base.html" %}
+
+{% load i18n staticfiles forum %}
+
+
+{% block javascript %}
+    <script src="{% static "forum/js/pagination.js" %}" type="text/javascript" charset="utf-8"></script>
+    {% if topics_page.object_list %}
+        <script type="text/javascript" charset="utf-8">
+            $(function () {
+                var $t = $('#topic-list');
+                Forum.pagination({
+                    {% if api_url_next %}urlNext: '{{ api_url_next }}',{% endif %}
+                    {% if api_url_previous %}urlPrev: '{{ api_url_previous }}',{% endif %}
+                    btnPrev: $t.find('.load-prev').closest('tr'),
+                    btnNext: $t.find('.load-next').closest('tr'),
+                    itemsBox: $t.find('tbody:first')
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+
+
+{% block action_buttons %}
+    <a href="{% url forum-topic-unread %}?next={% url forum-topic-list %}">
+        <i class="icon-eye-open"></i>
+        {% trans "Show unread topics" %}
+    </a>
+    <span class="separator">|</span>
+    <a href="{% url forum-topic-create %}">
+        <i class="icon-plus"></i>
+        {% trans "New topic" %}
+    </a>
+    <span class="separator">|</span>
+{% endblock %}
+
+
+{% block forum_content %}
+    <div class="row" id="topic-list">
+        <div class="span12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="span6">{% trans "Title" %}</th>
+                        <th>{% trans "Author" %}</th>
+                        <th>{% trans "Posts" %}</th>
+                        <th>{% trans "Views" %}</th>
+                        <th>{% trans "Last post" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if topics_page.has_previous %}
+                        <tr>
+                            <td colspan=5" class="center">
+                                <a href="?page={{ topics_page.previous_page_number }}" class="load-prev">
+                                    <div class="alert alert-info">
+                                        <i class="icon-arrow-up"></i>
+                                        {% trans "Load previous" %}
+                                    </div>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    {% for topic in topics_page.object_list %}
+                        {% topic_list_item_row topic=topic forum_user=forum_user %}
+                    {% empty %}
+                        <tr>
+                            <td colspan=5">
+                                <div class="alert alert-info center">
+                                    {% trans "No query results" %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    {% if topics_page.has_next %}
+                        <tr>
+                            <td colspan=5" class="center">
+                                <a href="?page={{ topics_page.next_page_number }}" class="load-next">
+                                    <div class="alert alert-info">
+                                        <i class="icon-arrow-down"></i>
+                                        {% trans "Load more" %}
+                                    </div>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

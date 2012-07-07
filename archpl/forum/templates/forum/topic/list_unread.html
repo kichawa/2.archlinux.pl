@@ -1,0 +1,24 @@
+{% extends "forum/topic/list.html" %}
+
+{% load i18n %}
+
+
+{% block action_buttons %}
+    {% if topics_page.object_list %}
+        <a href="{% url forum-topic-mark-all-read %}?next={% if next %}{{ next }}{% else %}{% url forum-topic-list %}{% endif %}">
+            <i class="icon-eye-open"></i>
+            {% trans "Mark all as read" %}
+        </a>
+    {% else %}
+        <span class="disabled">
+            <i class="icon-eye-close"></i>
+            {% trans "Mark all as read" %}
+        </span>
+    {% endif %}
+    <span class="separator">|</span>
+    <a href="{% url forum-topic-create %}">
+        <i class="icon-plus"></i>
+        {% trans "New topic" %}
+    </a>
+    <span class="separator">|</span>
+{% endblock %}

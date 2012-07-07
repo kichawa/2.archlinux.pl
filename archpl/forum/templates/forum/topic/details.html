@@ -1,0 +1,86 @@
+{% extends "forum/base.html" %}
+{% load i18n forum %}
+
+
+{% block action_buttons %}
+    {% if topic.author == forum_user or forum_user.is_moderator %}
+        <a href="{% url forum-topic-delete topic.id %}?next={% url forum-topic-list %}">
+            <i class="icon-trash"></i>
+            {% trans "Delete" %}
+        </a>
+        <span class="separator">|</span>
+        {% if topic.is_closed %}
+            <a href="#todo">
+                <i class="icon-refresh"></i>
+                {% trans "Open" %}
+            </a>
+        {% else %}
+            <a href="#todo">
+                <i class="icon-ban-circle"></i>
+                {% trans "Close" %}
+            </a>
+        {% endif %}
+        <span class="separator">|</span>
+        {% if topic.is_solved %}
+            <a href="#todo">
+                <i class="icon-ok"></i>
+                {% trans "Mark as solved" %}
+            </a>
+        {% else %}
+            <a href="#todo">
+                <i class="icon-ok"></i>
+                {% trans "Mark as solved" %}
+            </a>
+        {% endif %}
+        <span class="separator">|</span>
+    {% endif %}
+
+    {% if forum_user.is_admin %}
+        {% if topic.is_sticked %}
+            <a href="#todo">
+                <i class="icon-flag"></i>
+                {% trans "Unstick" %}
+            </a>
+        {% else %}
+            <a href="#todo">
+                <i class="icon-flag"></i>
+                {% trans "Stick" %}
+            </a>
+        {% endif %}
+        <span class="separator">|</span>
+    {% endif %}
+
+    <a href="{% url forum-topic-list %}">
+        <i class="icon-list-alt"></i>
+        {% trans "Topic list" %}
+    </a>
+    <span class="separator">|</span>
+    <a href="{% url forum-topic-create %}">
+        <i class="icon-plus"></i>
+        {% trans "New topic" %}
+    </a>
+    <span class="separator">|</span>
+{% endblock %}
+
+
+{% block forum_content %}
+    <div class="row">
+        <div class="span12">
+            <h1>{{ topic.title }}</h1>
+            {% for post in topic.post_set.all %}
+                <hr>
+                <div class="row" id="post-{{ post.id }}">
+                    <div class="span2">
+                        <a href="#post-{{ post.id }}">#</a>
+                        <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a>
+                        {{ post.author|avatar:"small" }}
+                    </div>
+                    <div class="span10">
+                        {{ post.content|format_bbcode }}
+                    </div>
+                </div>
+            {% endfor %}
+            <span id="post-last"></span>
+        </div>
+    </div>
+{% endblock %}

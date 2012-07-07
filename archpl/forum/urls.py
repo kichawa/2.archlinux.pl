@@ -1,0 +1,37 @@
+from django.conf.urls import patterns, url
+
+
+urlpatterns = patterns('forum.views',
+    url(r'^$',
+        'topic_list',
+        name='forum-topic-list'),
+    url(r'^topic/unread/$',
+        'topic_unread',
+        name='forum-topic-unread'),
+    url(r'^topic/all-read/$',
+        'topic_mark_all_read',
+        name='forum-topic-mark-all-read'),
+    url(r'^topic/create/$',
+        'topic_create',
+        name='forum-topic-create'),
+    url(r'^topic/(?P<topic_id>\d+)/(?:(?P<slug>[^/]+)/)?delete/$',
+        'topic_delete',
+        name='forum-topic-delete'),
+    url(r'^topic/(?P<topic_id>\d+)/(?:(?P<slug>[^/]+)/)?close/toggle/$',
+        'topic_toggle_close',
+        name='forum-topic-toggle-close'),
+    url(r'^topic/(?P<topic_id>\d+)/(?:(?P<slug>[^/]+)/)?response/$',
+        'post_create',
+        name='forum-post-create'),
+
+    url(r'^topic/(?P<topic_id>\d+)/(?:(?P<slug>[^/]+)/details/)?$',
+        'topic_details',
+        name='forum-topic-details'),
+
+    url(r'^user/([^/]+)/$',
+        'user_details',
+        name='forum-user-details'),
+    url(r'^user/([^/]+)/edit/$',
+        'user_edit',
+        name='forum-user-edit'),
+)

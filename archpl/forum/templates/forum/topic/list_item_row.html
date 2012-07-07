@@ -1,0 +1,36 @@
+{% load i18n %}
+
+
+<tr class="topic {% spaceless %}
+    {% if topic_is_unread %}unread{% endif %}
+    {% if topic.is_sticked %}sticked{% endif %}
+    {% if topic.is_closed %}closed{% endif %}
+    {% if topic.is_solved %}solved{% endif %}
+    {% endspaceless %}">
+    <td>
+        {% if topic_is_unread%}
+            <i class="icon-leaf"></i>
+            {% if topic.is_sticked %}<i class="icon-flag"></i>{% endif %}
+            {% if topic.is_closed %}<i class="icon-ban-circle"></i>{% endif %}
+            <strong><a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a></strong>
+        {% else %}
+            {% if topic.is_sticked %}<i class="icon-flag"></i>{% endif %}
+            {% if topic.is_closed %}<i class="icon-ban-circle"></i>{% endif %}
+            <a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a>
+        {% endif %}
+    </td>
+    <td>
+        <a href="{{ topic.first_post.author.get_absolute_url }}">
+            {{ topic.first_post.author.name }}
+        </a>
+    </td>
+    <td>{{ topic.post_count }}</td>
+    <td>{{ topic.display_count }}</td>
+    <td>
+        <a href="{{ topic.get_absolute_url }}#post-{{ topic.last_post.id }}">{{ topic.last_post.created }}</a>
+        <div class="last-post-info">
+            {% trans "by" %}
+            <a href="{{ topic.last_post.author.get_absolute_url }}">{{ topic.last_post.author.name }}</a>
+        </div>
+    </td>
+</tr>
