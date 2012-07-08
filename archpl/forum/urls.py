@@ -43,4 +43,8 @@ urlpatterns = patterns('forum.views',
     url(r'^user/([^/]+)/edit/$',
         'user_edit',
         name='forum-user-edit'),
+
+    url(r'^user/menu/position/toggle/$',
+        'user_menu_position_toggle',
+        name='forum-user-menu-position-toggle'),
 )

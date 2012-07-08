@@ -15,7 +15,7 @@
                 <div class="span12">&nbsp;</div>
             </div>
 
-            <div class="row top-menu">
+            <div class="row top-menu" {% if forum_user.menu_always_on_top %}style="position:fixed;top:0;right:0"{% endif %}>
                 <div class="span12 right">
                     {% block action_buttons %}
                     {% endblock %}
@@ -53,6 +53,15 @@
                             </ul>
                         </span>
                     {% endif %}
+                    <div class="position-setting">
+                        <a href="{% url forum-user-menu-position-toggle %}">
+                            {% if forum_user.menu_always_on_top %}
+                                <i class="icon-remove"></i>
+                            {% else %}
+                                <i class="icon-magnet"></i>
+                            {% endif %}
+                        </a>
+                    </div>
                 </div>
             </div>
 

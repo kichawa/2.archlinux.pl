@@ -73,8 +73,8 @@
 
 
             {% for post in topic.post_set.select_related %}
-                <hr>
-                <div class="row post {% if topic.is_solved %}is-{{ post.is_solving|yesno:",not-" }}solving{% endif %}" id="post-{{ post.id }}">
+                <hr id="post-{{ post.id }}">
+                <div class="row post {% if topic.is_solved %}is-{{ post.is_solving|yesno:",not-" }}solving{% endif %}">
                     <div class="span2">
                         <a href="#post-{{ post.id }}">#</a>
                         <p>

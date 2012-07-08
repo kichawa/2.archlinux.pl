@@ -220,6 +220,11 @@ def topic_toggle_sticky(request, topic_id, slug=None):
     topic.save()
     return _redirect_next(request, topic)
 
+def topic_redirect_to_solving_post(request, topic_id, slug=None):
+    topic = get_object_or_404(Topic, id=topic_id, solved_by__isnull=False)
+    post = topic.post_set.get(is_solving=True)
+    return redirect(post.get_absolute_url())
+
 @transaction.commit_on_success
 def post_is_solving(request, topic_id=None, slug=None, post_id=None):
     post = get_object_or_404(Post, id=post_id, topic__id=topic_id)
@@ -285,7 +290,9 @@ def user_edit(request, name_or_id):
     ctx = {'viewed_user': user, 'form': form}
     return render(request, 'forum/user/edit.html', ctx)
 
-def topic_redirect_to_solving_post(request, topic_id, slug=None):
-    topic = get_object_or_404(Topic, id=topic_id, solved_by__isnull=False)
-    post = topic.post_set.get(is_solving=True)
-    return redirect(post.get_absolute_url())
+@login_required
+def user_menu_position_toggle(request):
+    user = request.forum_user
+    user.menu_always_on_top = not user.menu_always_on_top
+    user.save()
+    return _redirect_next(request)

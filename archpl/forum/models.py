@@ -17,6 +17,7 @@ class ForumUser(models.Model):
     avatar = models.CharField(max_length=64, blank=True)
     name = models.CharField(max_length=32, unique=True)
     is_moderator = models.BooleanField(default=False)
+    menu_always_on_top = models.BooleanField(default=True)
 
     def is_anonymous(self):
         return False
