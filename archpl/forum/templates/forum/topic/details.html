@@ -33,12 +33,12 @@
     {% if forum_user.is_moderator %}
         {% if topic.is_sticked %}
             <a href="{% url forum-topic-toggle-sticky topic.id %}">
-                <i class="icon-flag"></i>
+                <i class="icon-star-empty"></i>
                 {% trans "Unstick" %}
             </a>
         {% else %}
             <a href="{% url forum-topic-toggle-sticky topic.id %}">
-                <i class="icon-flag"></i>
+                <i class="icon-star"></i>
                 {% trans "Stick" %}
             </a>
         {% endif %}
@@ -99,4 +99,36 @@
             <span id="post-last"></span>
         </div>
     </div>
+
+    {% if not topic.is_closed %}
+        <div class="row">
+            <form action="{% url forum-post-create topic.id %}" method="POST" accept-charset="utf-8" class="well post">
+                {% csrf_token %}
+                <div class="span8">
+                    {{ post_form.content }}
+                </div>
+                <div class="span3 right">
+                    <span class="markup-lang">
+                        {{ post_form.markup_lang }}
+                    </span>
+                    <button class="btn btn-primary">{% trans "Save" %}</button>
+                </div>
+                <div class="clear"></div>
+            </form>
+        </div>
+    {% else %}
+        <div class="spacer"></div>
+        <div class="row">
+            <div class="span3">&nbsp;</div>
+            <div class="span6">
+                <div class="alert alert-info">
+                    {% blocktrans %}
+                        This topic has been <strong>closed</strong> and it is
+                        no longer possible to create new posts here.
+                    {% endblocktrans %}
+                </div>
+            </div>
+            <div class="span3">&nbsp;</div>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -51,14 +51,14 @@ def format_bbcode(text):
 @register.filter
 def avatar(forum_user, size):
     size = int(size)
-    default_avatar = 'http://www.gravatar.com/avatar/?d=mm&s=120'
+    default_avatar = 'http://www.gravatar.com/avatar'
     gravatar = 'noavatar'
     if forum_user.avatar and '@' in forum_user.avatar:
         gravatar = hashlib.md5(forum_user.avatar.lower()).hexdigest()
     ctx = {'gravatar': gravatar, 'size': size, 'default': default_avatar}
     return mark_safe("""
         <img
-            src="http://www.gravatar.com/avatar/{gravatar}?s={size}&d={default}"
-            style="background: url('{default}&s={size}') no-repeat;width={size};height={size}"
+            src="http://www.gravatar.com/avatar/{gravatar}?s={size}&d=mm"
+            style="background: url('{default}?d=mm&s={size}') no-repeat;width={size};height={size}"
             class="avatar">
     """.format(**ctx).strip())

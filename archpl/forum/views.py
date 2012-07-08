@@ -93,6 +93,7 @@ def topic_details(request, topic_id, slug=None):
         'topic': topic,
         'posts_page': page,
         'forum_user': request.forum_user,
+        'post_form': PostForm(),
     }
     topic.display_count += 1
     topic.save()
@@ -239,13 +240,11 @@ def post_is_solving(request, topic_id=None, slug=None, post_id=None):
 @login_required
 @transaction.commit_on_success
 def post_create(request, topic_id, slug=None):
-    topic = get_object_or_404(id=topic_id, is_closed=False)
+    topic = get_object_or_404(Topic, id=topic_id, is_closed=False)
     is_xhr = bool(request.REQUEST.get('xhr'))
     post = Post(topic=topic, author=request.forum_user)
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
-    else:
-        form = PostForm()
         if form.is_valid():
             post = form.save()
             if is_xhr:
@@ -254,13 +253,15 @@ def post_create(request, topic_id, slug=None):
                     'saved': True,
                     'url': post.get_absolute_url()
                 }
-            return _redirect_next(post.get_absolute_url())
+            return _redirect_next(request, post)
         if is_xhr:
             return {
                 'status': 'ok',
                 'saved': False,
                 'errors': form.errors(),
             }
+    else:
+        form = PostForm()
 
     ctx = {'post_form': form, 'topic': topic}
     return render(request, 'forum/post/create.html', ctx)
