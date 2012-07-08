@@ -72,7 +72,7 @@
             </h1>
 
 
-            {% for post in topic.post_set.all %}
+            {% for post in topic.post_set.select_related %}
                 <hr>
                 <div class="row post {% if topic.is_solved %}is-{{ post.is_solving|yesno:",not-" }}solving{% endif %}" id="post-{{ post.id }}">
                     <div class="span2">
