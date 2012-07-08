@@ -96,12 +96,16 @@ class Topic(models.Model):
     updated = models.DateTimeField(auto_now_add=True)
     is_closed = models.BooleanField(default=False)
     is_sticked = models.BooleanField(default=False)
-    is_solved = models.BooleanField(default=False)
+    solved_by = models.PositiveIntegerField(null=True, blank=True)
 
     display_count = models.PositiveIntegerField(default=0)
     post_count = models.PositiveIntegerField(default=1)
     first_post = models.ForeignKey('Post', related_name='_topic_first')
     last_post = models.ForeignKey('Post', related_name='_topic_last')
+
+    @property
+    def is_solved(self):
+        return bool(self.solved_by)
 
     @models.permalink
     def get_absolute_url(self):
@@ -123,12 +127,12 @@ class Post(models.Model):
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     is_solving = models.BooleanField(default=False)
-    #markup_lang = models.CharField(max_length=8, choices=MARKUP_CHOICES)
-    markup_lang = 'bbcode'
+    markup_lang = models.CharField(max_length=8, choices=MARKUP_CHOICES,
+            default='bbcode')
 
     def get_absolute_url(self):
         slug = slugify(self.topic.title)
-        url = reverse('forum-topic-details', [self.topic.id, slug])
+        url = reverse('forum-topic-details', args=(self.topic.id, slug))
         return '{}#post-{}'.format(url, self.id)
 
     def __unicode__(self):

@@ -49,21 +49,16 @@ def format_bbcode(text):
     return mark_safe(html)
 
 @register.filter
-def avatar(forum_user, size_name=""):
-    if not size_name:
-        size = 80
-    elif size_name == "small":
-        size = 40
-    elif size_name == "big":
-        size = 120
-    elif size_name == "huge":
-        size = 220
-    else:
-        raise NotImplementedError
+def avatar(forum_user, size):
+    size = int(size)
     default_avatar = 'http://www.gravatar.com/avatar/?d=mm&s=120'
+    gravatar = 'noavatar'
     if forum_user.avatar and '@' in forum_user.avatar:
         gravatar = hashlib.md5(forum_user.avatar.lower()).hexdigest()
-        return mark_safe("""
-            <img src="http://www.gravatar.com/avatar/{}?s={}&d={}" class="avatar {}">
-        """.format(gravatar, size, default_avatar, size_name))
-    return '<img src="{}" class="avatar {}">'.format(default_avatar, size_name)
+    ctx = {'gravatar': gravatar, 'size': size, 'default': default_avatar}
+    return mark_safe("""
+        <img
+            src="http://www.gravatar.com/avatar/{gravatar}?s={size}&d={default}"
+            style="background: url('{default}&s={size}') no-repeat;width={size};height={size}"
+            class="avatar">
+    """.format(**ctx).strip())

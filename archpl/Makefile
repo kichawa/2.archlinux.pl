@@ -3,3 +3,9 @@ run:
 
 db:
 	python manage.py syncdb --noinput
+
+shell:
+	python manage.py shell
+
+dbshell:
+	python manage.py dbshell

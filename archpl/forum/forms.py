@@ -12,7 +12,7 @@ class TopicForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('content',)
+        fields = ('content', 'markup_lang')
 
 
 class ForumUserForm(forms.ModelForm):

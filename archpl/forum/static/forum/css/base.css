@@ -57,30 +57,25 @@
 
 
 
-.avatar {
-    background: url('http://www.gravatar.com/avatar/?d=mm&s=40') no-repeat;
-    height: 80px;
-    width: 80px;
-}
-.avatar.small {
-    background: url('http://www.gravatar.com/avatar/?d=mm&s=80') no-repeat;
-    height: 40px;
-    width: 40px;
-}
-.avatar.big {
-    background: url('http://www.gravatar.com/avatar/?d=mm&s=120') no-repeat;
-    height: 120px;
-    width: 120px;
-}
-
-.avatar.huge {
-    background: url('http://www.gravatar.com/avatar/?d=mm&s=220') no-repeat;
-    height: 220px;
-    width: 220px;
-}
-
-
 .topic .last-post-info {
     font-size: 0.85em;
     text-align: center;
+}
+
+
+.post.is-solving {
+}
+.post.is-not-solving .content {
+    color: #8A8A8A;
+}
+
+
+tr.topic.unread {
+    font-weight: bold;
+}
+tr.topic.sticked {
+}
+tr.topic.closed {
+}
+tr.topic.solved {
 }

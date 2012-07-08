@@ -12,3 +12,16 @@ After cloning the repository, install all requirements:
 , and run development server:
 
     $ make run
+
+
+Admin panel
+-----------
+
+Django's admin panel is available under `/_admin/` path:
+
+    http://localhost:8000/_admin/
+
+Password and login for default admin account are:
+
+    login:    admin
+    password: a
