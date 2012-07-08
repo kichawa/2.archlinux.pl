@@ -8,14 +8,14 @@
     {% if topic.is_solved %}solved{% endif %}
     {% endspaceless %}">
     <td>
-        {% if topic_is_unread%}
-            <i class="icon-leaf"></i>
-            {% if topic.is_sticked %}<i class="icon-flag"></i>{% endif %}
-            {% if topic.is_closed %}<i class="icon-ban-circle"></i>{% endif %}
-            <strong><a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a></strong>
+        {% if topic.is_solved %}<i class="icon-ok"></i>{% endif %}
+        {% if topic_is_unread%}<i class="icon-leaf"></i>{% endif %}
+        {% if topic.is_sticked %}<i class="icon-flag"></i>{% endif %}
+        {% if topic.is_closed %}<i class="icon-ban-circle"></i>{% endif %}
+
+        {% if topic.is_solved %}
+            <a href="{% url forum-topic-redirect-to-solving-post topic.id topic.title|slugify %}">{{ topic.title }}</a>
         {% else %}
-            {% if topic.is_sticked %}<i class="icon-flag"></i>{% endif %}
-            {% if topic.is_closed %}<i class="icon-ban-circle"></i>{% endif %}
             <a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a>
         {% endif %}
     </td>

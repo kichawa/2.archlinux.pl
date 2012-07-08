@@ -10,12 +10,12 @@
         </a>
         <span class="separator">|</span>
         {% if topic.is_closed %}
-            <a href="#todo">
+            <a href="{% url forum-topic-toggle-close topic.id %}">
                 <i class="icon-refresh"></i>
                 {% trans "Open" %}
             </a>
         {% else %}
-            <a href="#todo">
+            <a href="{% url forum-topic-toggle-close topic.id %}">
                 <i class="icon-ban-circle"></i>
                 {% trans "Close" %}
             </a>
@@ -24,25 +24,20 @@
         {% if topic.is_solved %}
             <a href="#todo">
                 <i class="icon-ok"></i>
-                {% trans "Mark as solved" %}
+                {% trans "Unmark \"solved\"" %}
             </a>
-        {% else %}
-            <a href="#todo">
-                <i class="icon-ok"></i>
-                {% trans "Mark as solved" %}
-            </a>
+            <span class="separator">|</span>
         {% endif %}
-        <span class="separator">|</span>
     {% endif %}
 
-    {% if forum_user.is_admin %}
+    {% if forum_user.is_moderator %}
         {% if topic.is_sticked %}
-            <a href="#todo">
+            <a href="{% url forum-topic-toggle-sticky topic.id %}">
                 <i class="icon-flag"></i>
                 {% trans "Unstick" %}
             </a>
         {% else %}
-            <a href="#todo">
+            <a href="{% url forum-topic-toggle-sticky topic.id %}">
                 <i class="icon-flag"></i>
                 {% trans "Stick" %}
             </a>
@@ -66,16 +61,37 @@
 {% block forum_content %}
     <div class="row">
         <div class="span12">
-            <h1>{{ topic.title }}</h1>
+            <h1>
+                {{ topic.title }}
+                {% if topic.is_solved %}
+                    <a href="#post-{{ topic.solved_by }}">
+                        <i class="icon-ok"></i>
+                        {% trans "Solving post" %}
+                    </a>
+                {% endif %}
+            </h1>
+
+
             {% for post in topic.post_set.all %}
                 <hr>
-                <div class="row" id="post-{{ post.id }}">
+                <div class="row post {% if topic.is_solved %}is-{{ post.is_solving|yesno:",not-" }}solving{% endif %}" id="post-{{ post.id }}">
                     <div class="span2">
                         <a href="#post-{{ post.id }}">#</a>
-                        <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a>
-                        {{ post.author|avatar:"small" }}
+                        <p>
+                            <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a>
+                        </p>
+                        <p>
+                            {{ post.author|avatar:"128" }}
+                        </p>
+                        {% if not topic.is_solved %}
+                            <p>
+                                <a href="{% url forum-post-is-solving topic_id=topic.id post_id=post.id %}">
+                                    {% trans "This post is solving the problem" %}
+                                </a>
+                            </p>
+                        {% endif %}
                     </div>
-                    <div class="span10">
+                    <div class="span10 content">
                         {{ post.content|format_bbcode }}
                     </div>
                 </div>
