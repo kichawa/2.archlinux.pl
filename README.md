@@ -3,7 +3,7 @@ Running test instance
 
 After cloning the repository, install all requirements:
 
-    $ pip install -f requirements.txt
+    $ pip install -r requirements.txt
 
 ,create a database (sqlite3 by default):
 
