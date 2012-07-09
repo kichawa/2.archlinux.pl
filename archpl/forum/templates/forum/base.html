@@ -54,13 +54,15 @@
                         </span>
                     {% endif %}
                     <div class="position-setting">
-                        <a href="{% url forum-user-menu-position-toggle %}">
-                            {% if forum_user.menu_always_on_top %}
-                                <i class="icon-remove"></i>
-                            {% else %}
-                                <i class="icon-magnet"></i>
-                            {% endif %}
-                        </a>
+                        {% if forum_user.is_authenticated %}
+                            <a href="{% url forum-user-menu-position-toggle %}">
+                                {% if forum_user.menu_always_on_top %}
+                                    <i class="icon-remove"></i>
+                                {% else %}
+                                    <i class="icon-magnet"></i>
+                                {% endif %}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

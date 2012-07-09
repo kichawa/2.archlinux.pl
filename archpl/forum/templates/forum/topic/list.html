@@ -10,8 +10,8 @@
             $(function () {
                 var $t = $('#topic-list');
                 Forum.pagination({
-                    {% if api_url_next %}urlNext: '{{ api_url_next }}',{% endif %}
-                    {% if api_url_previous %}urlPrev: '{{ api_url_previous }}',{% endif %}
+                    {% if pagination.next %}pageNext: {{ pagination.next }},{% endif %}
+                    {% if pagination.prev  %}pagePrev: {{ pagination.prev }},{% endif %}
                     btnPrev: $t.find('.load-prev').closest('tr'),
                     btnNext: $t.find('.load-next').closest('tr'),
                     itemsBox: $t.find('tbody:first')
@@ -23,14 +23,21 @@
 
 
 {% block action_buttons %}
-    <a href="{% url forum-topic-unread %}?next={% url forum-topic-list %}">
-        <i class="icon-eye-open"></i>
-        {% trans "Show unread topics" %}
-    </a>
-    <span class="separator">|</span>
-    <a href="{% url forum-topic-create %}">
-        <i class="icon-plus"></i>
-        {% trans "New topic" %}
+    {% if forum_user.is_authenticated %}
+        <a href="{% url forum-topic-unread %}?next={% url forum-topic-list %}">
+            <i class="icon-eye-open"></i>
+            {% trans "Show unread topics" %}
+        </a>
+        <span class="separator">|</span>
+        <a href="{% url forum-topic-create %}">
+            <i class="icon-plus"></i>
+            {% trans "New topic" %}
+        </a>
+        <span class="separator">|</span>
+    {% endif %}
+    <a href="#todo">
+        <i class="icon-search"></i>
+        {% trans "Search" %}
     </a>
     <span class="separator">|</span>
 {% endblock %}

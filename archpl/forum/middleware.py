@@ -14,10 +14,10 @@ def _get_forum_user(request):
             if request.user.is_anonymous():
                 u = AnonymousForumUser()
             else:
-                try:
-                    u = ForumUser.objects.get(user=request.user)
-                except ForumUser.DoesNotExist:
-                    u = AnonymousForumUser()
+                name = request.user.get_full_name() or request.user.username
+                avatar = request.user.email
+                u, _ = ForumUser.objects.get_or_create(user=request.user,
+                        defaults={'name': name, 'avatar': avatar})
             request._cached_forum_user = u
         return request._cached_forum_user
 

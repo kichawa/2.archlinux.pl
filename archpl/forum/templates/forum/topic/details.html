@@ -3,7 +3,7 @@
 
 
 {% block action_buttons %}
-    {% if topic.author == forum_user or forum_user.is_moderator %}
+    {% if forum_user.is_moderator %}
         <a href="{% url forum-topic-delete topic.id %}?next={% url forum-topic-list %}">
             <i class="icon-trash"></i>
             {% trans "Delete" %}
@@ -50,11 +50,18 @@
         {% trans "Topic list" %}
     </a>
     <span class="separator">|</span>
-    <a href="{% url forum-topic-create %}">
-        <i class="icon-plus"></i>
-        {% trans "New topic" %}
+    <a href="#todo">
+        <i class="icon-search"></i>
+        {% trans "Search" %}
     </a>
     <span class="separator">|</span>
+    {% if forum_user.is_authenticated %}
+        <a href="{% url forum-topic-create %}">
+            <i class="icon-plus"></i>
+            {% trans "New topic" %}
+        </a>
+        <span class="separator">|</span>
+    {% endif %}
 {% endblock %}
 
 
@@ -83,16 +90,18 @@
                         <p>
                             {{ post.author|avatar:"128" }}
                         </p>
-                        {% if not topic.is_solved %}
-                            <p>
-                                <a href="{% url forum-post-is-solving topic_id=topic.id post_id=post.id %}">
-                                    {% trans "This post is solving the problem" %}
-                                </a>
-                            </p>
+                        {% if forum_user.is_authenticated and not topic.is_solved %}
+                            {% if forum_user.id == topic.author.id or forum_user.is_moderator %}
+                                <p>
+                                    <a href="{% url forum-post-is-solving topic_id=topic.id post_id=post.id %}">
+                                        {% trans "This post is solving the problem" %}
+                                    </a>
+                                </p>
+                            {% endif %}
                         {% endif %}
                     </div>
                     <div class="span10 content">
-                        {{ post.content|format_bbcode }}
+                        {{ post.content_as_html }}
                     </div>
                 </div>
             {% endfor %}
@@ -102,19 +111,32 @@
 
     {% if not topic.is_closed %}
         <div class="row">
-            <form action="{% url forum-post-create topic.id %}" method="POST" accept-charset="utf-8" class="well post">
-                {% csrf_token %}
-                <div class="span8">
-                    {{ post_form.content }}
+            {% if forum_user.is_authenticated %}
+                <form action="{% url forum-post-create topic.id %}" method="POST" accept-charset="utf-8" class="well post">
+                    {% csrf_token %}
+                    <div class="span8">
+                        {{ post_form.content }}
+                    </div>
+                    <div class="span3 right">
+                        <span class="markup-lang">
+                            {{ post_form.markup_lang }}
+                        </span>
+                        <button class="btn btn-primary">{% trans "Save" %}</button>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+            {% else %}
+                <div class="span3">&nbsp;</div>
+                <div class="span6">
+                    <div class="alert alert-info">
+                        {% blocktrans %}
+                            You have to <a href="#">login</a> to be able to
+                            comment on this topic.
+                        {% endblocktrans %}
+                    </div>
                 </div>
-                <div class="span3 right">
-                    <span class="markup-lang">
-                        {{ post_form.markup_lang }}
-                    </span>
-                    <button class="btn btn-primary">{% trans "Save" %}</button>
-                </div>
-                <div class="clear"></div>
-            </form>
+                <div class="span3">&nbsp;</div>
+            {% endif %}
         </div>
     {% else %}
         <div class="spacer"></div>

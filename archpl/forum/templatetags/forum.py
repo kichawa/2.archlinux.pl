@@ -5,8 +5,6 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 
-import bbcode
-
 register = template.Library()
 
 
@@ -22,7 +20,6 @@ def topic_list_item_row(topic, forum_user=None):
     ctx = {'topic': topic, 'topic_is_unread': is_unread}
     return render_to_string('forum/topic/list_item_row.html', ctx)
 
-
 @register.filter
 def topic_is_unread(topic, forum_user):
     if forum_user.is_anonymous():
@@ -33,20 +30,6 @@ def topic_is_unread(topic, forum_user):
     if topic.id in visit.visited_ids:
         return False
     return True
-
-
-def _bbcode_render_code(tag_name, value, options, parent, context):
-    return u'<pre><code>{}</code></pre>'.format(value)
-
-_bbcode_parser = bbcode.Parser()
-_bbcode_parser.add_formatter('code',
-        _bbcode_render_code, render_embedded=False, escape_html=False,
-        replace_links=False, replace_cosmetic=False, strip=False)
-
-@register.filter
-def format_bbcode(text):
-    html = _bbcode_parser.format(text)
-    return mark_safe(html)
 
 @register.filter
 def avatar(forum_user, size):

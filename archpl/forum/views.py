@@ -2,21 +2,16 @@ import datetime
 import json
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.core import paginator
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 
 from forum.models import Topic, Post, ForumUser
 from forum.forms import TopicForm, PostForm, ForumUserForm
-from forum.templatetags.forum import topic_list_item_row
 from forum.decorators import moderator_login_required
+from forum.pagination import TopicPaginator, PostPaginator
 
-
-def _api_url(request, page):
-    chunks = [request.path, "?page=", str(page)]
-    return "".join(chunks)
 
 def _redirect_next(request, model_or_route_name=None, args=()):
     next_uri = request.REQUEST.get('next', None)
@@ -33,62 +28,39 @@ def topic_list(request):
     per_page = 40
     topics = Topic.objects.all().select_related(depth=2)\
             .order_by('-is_sticked', '-updated')
-    tpaginator = paginator.Paginator(topics, per_page)
+    tpaginator = TopicPaginator(topics, per_page)
 
-    page_num = request.GET.get('page')
     try:
-        page = tpaginator.page(page_num)
-    except paginator.PageNotAnInteger:
-        page = tpaginator.page(1)
-    except paginator.EmptyPage:
-        tpaginator = paginator.Paginator(Topic.objects.none(), per_page)
-        page = tpaginator.page(1)
+        page = tpaginator.page(int(request.GET.get('page', 1)))
+    except (TypeError, ValueError):
+        return HttpResponseBadRequest()
 
     if 'xhr' in request.GET:
-        objects = []
-        for t in page.object_list:
-            objects.append({
-                'id': t.id,
-                'html': topic_list_item_row(t, request.forum_user),
-            })
-        response = {
-            'meta': {
-                'pagination': {
-                    'next': _api_url(request, page.next_page_number()),
-                    'prev': _api_url(request, page.previous_page_number()),
-                    'current': _api_url(request, page.number),
-                },
-                'per_page': per_page,
-            },
-            'objects': objects,
-        }
+        response = page.as_json_ready(request)
         content = json.dumps(response)
         return HttpResponse(content, content_type='application/json')
 
     ctx = {
         'forum_user': request.forum_user,
         'topics_page': page,
-        'api_url_next': _api_url(request, page.next_page_number()),
-        'api_url_previous': _api_url(request, page.previous_page_number()),
     }
+    ctx.update(page.as_json_ready_meta(request))
     return render(request, 'forum/topic/list.html', ctx)
 
 def topic_details(request, topic_id, slug=None):
     per_page = 100
     topic = get_object_or_404(Topic.objects.select_related(), id=topic_id)
     posts = topic.post_set.all().order_by('-created')
-    ppaginator = paginator.Paginator(posts, per_page)
+    ppaginator = PostPaginator(posts, per_page)
 
     if request.forum_user.is_authenticated():
         request.forum_user.forum_visit.mark_visited(topic)
 
-    page_num = request.GET.get('page')
     try:
-        page = ppaginator.page(page_num)
-    except paginator.PageNotAnInteger:
-        page = ppaginator.page(1)
-    except paginator.EmptyPage:
-        page = ppaginator.page(ppaginator.num_pages)
+        page = ppaginator.page(int(request.GET.get('page', 1)))
+    except (TypeError, ValueError):
+        return HttpResponseBadRequest()
+
     ctx = {
         'topic': topic,
         'posts_page': page,
@@ -166,11 +138,7 @@ def topic_unread(request):
             })
         response = {
             'meta': {
-                'pagination': {
-                    'next': _api_url(request, page.next_page_number()),
-                    'prev': _api_url(request, page.previous_page_number()),
-                    'current': _api_url(request, page.number),
-                },
+                'pagination': _xhr_pagination_meta(request, page),
                 'per_page': per_page,
             },
             'objects': objects,

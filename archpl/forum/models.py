@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
 
+from forum import markup
 
 
 class AnonymousForumUser(AnonymousUser):
@@ -120,7 +121,6 @@ class Topic(models.Model):
 class Post(models.Model):
     MARKUP_CHOICES = (
         ('markdown', 'Markdown'),
-        ('texttile', 'Texttile'),
         ('bbcode', 'BBCode'),
     )
     topic = models.ForeignKey(Topic, null=True)
@@ -130,6 +130,14 @@ class Post(models.Model):
     is_solving = models.BooleanField(default=False)
     markup_lang = models.CharField(max_length=8, choices=MARKUP_CHOICES,
             default='bbcode')
+
+    def content_as_html(self):
+        if self.markup_lang == 'markdown':
+            return markup.format_markdown(self.content)
+        if self.markup_lang == 'bbcode':
+            return markup.format_bbcode(self.content)
+        raise TypeError( "Unsupported markup language: {}"\
+                .format(self.markup_lang))
 
     def get_absolute_url(self):
         slug = slugify(self.topic.title)
