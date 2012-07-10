@@ -1,0 +1,54 @@
+{% extends "forum/base.html" %}
+
+{% load i18n staticfiles %}
+
+
+
+{% block action_buttons %}
+    <a href="{% url forum-topic-list %}">
+        <i class="icon-list-alt"></i>
+        {% trans "Topic list" %}
+    </a>
+    <span class="separator">|</span>
+    <a href="{% url forum-topic-create %}">
+        <i class="icon-plus"></i>
+        {% trans "New topic" %}
+    </a>
+    <span class="separator">|</span>
+{% endblock %}
+
+
+{% block forum_content %}
+    <div class="row">
+        <div class="span12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Description" %}</th>
+                        <th>{% trans "Topics" %}</th>
+                        <th>{% trans "Posts" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>
+                                <a href="#">{{ category.name }}</a>
+                            </td>
+                            <td>
+                                {{ category.description }}
+                            </td>
+                            <td>
+                                {{ category.topic_count }}
+                            </td>
+                            <td>
+                                {{ category.post_count }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

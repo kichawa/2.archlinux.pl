@@ -16,6 +16,11 @@
         </span>
     {% endif %}
     <span class="separator">|</span>
+    <a href="{% url forum-topic-list %}">
+        <i class="icon-list-alt"></i>
+        {% trans "Topic list" %}
+    </a>
+    <span class="separator">|</span>
     <a href="{% url forum-topic-create %}">
         <i class="icon-plus"></i>
         {% trans "New topic" %}
