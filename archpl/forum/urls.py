@@ -2,6 +2,10 @@ from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('forum.views',
+    url(r'^categories/$',
+        'category_list',
+        name='forum-category-list'),
+
     url(r'^$',
         'topic_list',
         name='forum-topic-list'),

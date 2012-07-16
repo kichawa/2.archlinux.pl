@@ -10,8 +10,12 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_DIR, 'storage.sqlite3.db'),
-    }
+        'NAME': os.path.join(PROJECT_DIR, 'storage.archpl.sqlite3.db'),
+    },
+    'irc': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_DIR, 'storage.irc.sqlite3.db'),
+    },
 }
 
 TIME_ZONE = 'Europe/Warsaw'
@@ -26,6 +30,9 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
 )
+DATABASE_ROUTERS = [
+    'archpl.dbrouter.DBRouter',
+]
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -46,6 +53,7 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'forum.middleware.ForumAuthenticationMiddleware',
+    'pjax.middleware.AsPJAX',
 )
 INTERNAL_IPS = ('127.0.0.1',)
 ROOT_URLCONF = 'archpl.urls'
@@ -80,7 +88,10 @@ INSTALLED_APPS = (
 
     'debug_toolbar',
 
+    'core',
     'forum',
+    'ircapp',
+    'pjax',
 )
 
 LOGGING = {

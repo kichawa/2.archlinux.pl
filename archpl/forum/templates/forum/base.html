@@ -4,10 +4,11 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <title>{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" type="text/css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="{% static "core/css/bootstrap.min.css" %}" type="text/css" media="screen" charset="utf-8">
         <link rel="stylesheet" href="{% static "forum/css/base.css" %}" type="text/css" media="screen" charset="utf-8">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{% static "core/js/jquery.js" %}" type="text/javascript" charset="utf-8"></script>
         {% block javascript %}{% endblock %}
+        <script src="{% static "pjax/js/pjax.js" %}" type="text/javascript" charset="utf-8"></script>
     </head>
     <body>
         <div class="container">

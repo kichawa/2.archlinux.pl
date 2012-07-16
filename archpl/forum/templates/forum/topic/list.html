@@ -23,6 +23,11 @@
 
 
 {% block action_buttons %}
+    <a href="{% url forum-category-list %}">
+        <i class="icon-tags"></i>
+        {% trans "Categories" %}
+    </a>
+    <span class="separator">|</span>
     {% if forum_user.is_authenticated %}
         <a href="{% url forum-topic-unread %}?next={% url forum-topic-list %}">
             <i class="icon-eye-open"></i>

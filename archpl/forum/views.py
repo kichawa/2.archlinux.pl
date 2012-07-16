@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 
-from forum.models import Topic, Post, ForumUser
+from forum.models import Topic, Post, ForumUser, Category
 from forum.forms import TopicForm, PostForm, ForumUserForm
 from forum.decorators import moderator_login_required
 from forum.pagination import TopicPaginator, PostPaginator
@@ -23,6 +23,11 @@ def _redirect_next(request, model_or_route_name=None, args=()):
     if not next_uri:
         next_uri = request.META.get('HTTP_REFERER', None)
     return redirect(next_uri)
+
+def category_list(request):
+    categories = Category.objects.all()
+    ctx = {'categories': categories}
+    return render(request, 'forum/category/list.html', ctx)
 
 def topic_list(request):
     per_page = 40
@@ -97,6 +102,11 @@ def _topic_create_POST(request):
                 topic = topic_form.save()
                 post.topic = topic
                 post.save()
+                for category in topic.categories.all():
+                    category.topic_count = category.topic_set.all().count()
+                    category.post_count = Post.objects\
+                            .filter(topic__in=category.topic_set.all()).count()
+                    category.save()
                 return redirect(post.get_absolute_url())
         else:
             post_form = PostForm(request.POST)
@@ -118,40 +128,23 @@ def topic_unread(request):
     per_page = 40
     topics = request.forum_user.forum_visit.unread_topics()
     topics = topics.order_by('-is_sticked', '-updated')
-    tpaginator = paginator.Paginator(topics, per_page)
+    tpaginator = TopicPaginator(topics, per_page)
 
-    page_num = request.GET.get('page')
     try:
-        page = tpaginator.page(page_num)
-    except paginator.PageNotAnInteger:
-        page = tpaginator.page(1)
-    except paginator.EmptyPage:
-        tpaginator = paginator.Paginator(Topic.objects.none(), per_page)
-        page = tpaginator.page(1)
+        page = tpaginator.page(int(request.GET.get('page', 1)))
+    except (TypeError, ValueError):
+        return HttpResponseBadRequest()
 
     if 'xhr' in request.GET:
-        objects = []
-        for t in page.object_list:
-            objects.append({
-                'id': t.id,
-                'html': topic_list_item_row(t, request.forum_user),
-            })
-        response = {
-            'meta': {
-                'pagination': _xhr_pagination_meta(request, page),
-                'per_page': per_page,
-            },
-            'objects': objects,
-        }
+        response = page.as_json_ready(request)
         content = json.dumps(response)
         return HttpResponse(content, content_type='application/json')
 
     ctx = {
         'forum_user': request.forum_user,
         'topics_page': page,
-        'api_url_next': _api_url(request, page.next_page_number()),
-        'api_url_previous': _api_url(request, page.previous_page_number()),
     }
+    ctx.update(page.as_json_ready_meta(request))
     return render(request, 'forum/topic/list_unread.html', ctx)
 
 @login_required
@@ -215,6 +208,17 @@ def post_create(request, topic_id, slug=None):
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save()
+
+            # update counters
+            topic.post_count = topic.post_set.all().count()
+            topic.updated = post.created
+            topic.save()
+            for category in topic.categories.all():
+                category.topic_count = category.topic_set.all().count()
+                category.post_count = Post.objects\
+                        .filter(topic__in=category.topic_set.all()).count()
+                category.save()
+
             if is_xhr:
                 return {
                     'status': 'ok',
