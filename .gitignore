@@ -1,0 +1,8 @@
+*.py[co]
+.*
+*~
+*sqlite3.db
+bin/
+include/
+lib/
+share/
