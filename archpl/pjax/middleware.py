@@ -29,9 +29,10 @@ class AsPJAX(object):
         if content_type.startswith('application/json'):
             return response
         if content_type.startswith('text/html'):
+            resp['location'] = request.path
             resp['html'] = {
-                'body': _extract(BODY_RX, content),
-                'head': _extract(HEAD_RX, content),
+                'body': _compress(_extract(BODY_RX, content)),
+                'head': _compress(_extract(HEAD_RX, content)),
             }
         else:
             raise NotImplementedError
@@ -47,9 +48,10 @@ def _extract(rx, html):
     try:
         sre = rx.finditer(html).next()
     except StopIteration:
-        return None
+        return ''
     if not sre:
-        return None
-    data = sre.group()
-    compressed_data = COMPRESSOR.sub(' ', data)
-    return compressed_data
+        return ''
+    return sre.group()
+
+def _compress(s):
+    return COMPRESSOR.sub(' ', s)

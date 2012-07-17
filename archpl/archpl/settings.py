@@ -53,7 +53,7 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'forum.middleware.ForumAuthenticationMiddleware',
-    'pjax.middleware.AsPJAX',
+    #'pjax.middleware.AsPJAX',
 )
 INTERNAL_IPS = ('127.0.0.1',)
 ROOT_URLCONF = 'archpl.urls'
@@ -91,7 +91,7 @@ INSTALLED_APPS = (
     'core',
     'forum',
     'ircapp',
-    'pjax',
+    #'pjax',
 )
 
 LOGGING = {

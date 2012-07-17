@@ -22,11 +22,13 @@
             if (resp.status !== 'ok') {
                 throw "fail", resp
             }
+
             if (resp.code === 302) {
                 $.getJSON(resp.location, {pjax: 1}, loadPage);
                 return false;
             }
-            history.pushState({pjax: true}, null, href);
+
+            history.pushState({pjax: true}, null, resp.location);
             $('body').html(resp.html.body);
         };
 
