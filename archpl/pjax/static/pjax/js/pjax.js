@@ -18,14 +18,21 @@
 
         e.preventDefault();
 
-        // let the pjax happen!
-        $.getJSON(href, {pjax: 1}, function (resp) {
+        var loadPage = function (resp) {
             if (resp.status !== 'ok') {
                 throw "fail", resp
             }
-            history.pushState(null, null, href);
-            $('body').html(resp.html);
-        });
+            if (resp.code === 302) {
+                $.getJSON(resp.location, {pjax: 1}, loadPage);
+                return false;
+            }
+            history.pushState({pjax: true}, null, href);
+            $('body').html(resp.html.body);
+        };
+
+        // let the pjax happen!
+        $.getJSON(href, {pjax: 1}, loadPage);
+
         return false;
     });
 
